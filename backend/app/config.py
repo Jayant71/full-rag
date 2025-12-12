@@ -20,11 +20,18 @@ class Settings(BaseSettings):
     POSTGRES_URL: Optional[str] = None
     
     # Storage
-    STORAGE_TYPE: Literal["local", "s3"] = "local"
+    STORAGE_TYPE: Literal["local", "s3", "supabase"] = "local"
     S3_ENDPOINT_URL: Optional[str] = None
     S3_ACCESS_KEY: Optional[str] = None
     S3_SECRET_KEY: Optional[str] = None
     S3_BUCKET_NAME: Optional[str] = "rag-bucket"
     S3_REGION: Optional[str] = "us-east-1"
+    
+    # Supabase (optional - for auth)
+    SUPABASE_URL: Optional[str] = None
+    SUPABASE_SERVICE_KEY: Optional[str] = None
+    
+    # CORS
+    FRONTEND_URL: str = "http://localhost:5173"
 
 settings = Settings()
