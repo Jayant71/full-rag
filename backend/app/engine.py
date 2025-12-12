@@ -26,14 +26,20 @@ nest_asyncio.apply()
 
 
 def get_vector_store(api_keys: UserAPIKeys) -> QdrantVectorStore:
-    """Get the Qdrant vector store instance using user's Qdrant URL."""
-    client = QdrantClient(url=api_keys.get_qdrant_url())
+    """Get the Qdrant vector store instance using user's Qdrant URL and API key."""
+    client = QdrantClient(
+        url=api_keys.get_qdrant_url(),
+        api_key=api_keys.qdrant_api_key  # Optional - for Qdrant Cloud
+    )
     return QdrantVectorStore(client=client, collection_name="rag_collection")
 
 
 def get_qdrant_client(api_keys: UserAPIKeys) -> QdrantClient:
-    """Get the Qdrant client instance using user's Qdrant URL."""
-    return QdrantClient(url=api_keys.get_qdrant_url())
+    """Get the Qdrant client instance using user's Qdrant URL and API key."""
+    return QdrantClient(
+        url=api_keys.get_qdrant_url(),
+        api_key=api_keys.qdrant_api_key  # Optional - for Qdrant Cloud
+    )
 
 
 def get_index(api_keys: UserAPIKeys) -> VectorStoreIndex:

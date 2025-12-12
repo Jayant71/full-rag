@@ -18,6 +18,7 @@ class UserAPIKeys:
     llama_cloud_api_key: Optional[str] = None
     cohere_api_key: Optional[str] = None
     qdrant_url: Optional[str] = None
+    qdrant_api_key: Optional[str] = None
     
     def get_openai_key(self) -> str:
         """Get OpenAI key. Raises error if not configured."""
@@ -114,6 +115,7 @@ async def get_user_api_keys(user_id: str) -> UserAPIKeys:
                         llama_cloud_api_key=config.get("llama_cloud_api_key"),
                         cohere_api_key=config.get("cohere_api_key"),
                         qdrant_url=config.get("qdrant_url"),
+                        qdrant_api_key=config.get("qdrant_api_key"),
                     )
     except Exception as e:
         print(f"Failed to fetch user API keys: {e}")

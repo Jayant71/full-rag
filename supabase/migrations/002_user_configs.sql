@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS user_configs (
     
     -- Infrastructure
     qdrant_url TEXT,  -- User's Qdrant instance URL
+    qdrant_api_key TEXT,  -- Qdrant Cloud API key
     
     -- Preferences
     default_llm_model TEXT DEFAULT 'gpt-4o',
