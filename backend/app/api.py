@@ -171,6 +171,23 @@ async def ingest_files(
             
     return responses
 
+# --- Messages ---
+
+@app.get("/spaces/{space_id}/messages", response_model=List[ChatMessage])
+async def get_messages(space_id: str, session: Session = Depends(get_session)):
+    """Get chat history for a space."""
+    # Verify space exists
+    space = session.get(Space, uuid.UUID(space_id))
+    if not space:
+        raise HTTPException(status_code=404, detail="Space not found")
+    
+    messages = session.exec(
+        select(ChatMessage)
+        .where(ChatMessage.space_id == space.id)
+        .order_by(ChatMessage.timestamp)
+    ).all()
+    return messages
+
 # --- Chat ---
 
 @app.post("/chat/{space_id}", response_model=ChatResponse)
