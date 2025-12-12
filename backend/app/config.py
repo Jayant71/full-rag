@@ -7,13 +7,12 @@ class Settings(BaseSettings):
     # General
     ENV: Literal["dev", "prod"] = "dev"
     
-    # API Keys
-    OPENAI_API_KEY: str
-    LLAMA_CLOUD_API_KEY: str
+    # API Keys (BYOK - users provide their own via Settings page)
+    # These are now optional - only used as fallback for development
+    OPENAI_API_KEY: Optional[str] = None
+    LLAMA_CLOUD_API_KEY: Optional[str] = None
     COHERE_API_KEY: Optional[str] = None
-    
-    # Qdrant
-    QDRANT_URL: str = "http://localhost:6333"
+    QDRANT_URL: Optional[str] = None
     
     # Database
     DATABASE_TYPE: Literal["sqlite", "postgres"] = "sqlite"
@@ -27,7 +26,7 @@ class Settings(BaseSettings):
     S3_BUCKET_NAME: Optional[str] = "rag-bucket"
     S3_REGION: Optional[str] = "us-east-1"
     
-    # Supabase (optional - for auth)
+    # Supabase (required for production)
     SUPABASE_URL: Optional[str] = None
     SUPABASE_SERVICE_KEY: Optional[str] = None
     
