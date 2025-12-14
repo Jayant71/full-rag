@@ -56,6 +56,49 @@ async def list_spaces(session: Session = Depends(get_session)):
     spaces = session.exec(select(Space)).all()
     return spaces
 
+@app.delete("/spaces/{space_id}")
+async def delete_space(
+    space_id: str,
+    session: Session = Depends(get_session),
+    user: User = Depends(get_current_user)
+):
+    """Delete a space and all its documents."""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required.")
+    
+    # Verify space exists
+    space = session.get(Space, uuid.UUID(space_id))
+    if not space:
+        raise HTTPException(status_code=404, detail="Space not found")
+    
+    # Delete all documents in this space from vector store
+    api_keys = await get_user_api_keys(user.id)
+    try:
+        from app.engine import delete_document_from_vector_store
+        documents = session.exec(select(Document).where(Document.space_id == space.id)).all()
+        for doc in documents:
+            try:
+                delete_document_from_vector_store(space_id, doc.filename, api_keys)
+            except:
+                pass  # Continue even if vector deletion fails
+    except:
+        pass  # Continue even if no API keys configured
+    
+    # Delete all chat messages
+    session.exec(select(ChatMessage).where(ChatMessage.space_id == space.id)).all()
+    for msg in session.exec(select(ChatMessage).where(ChatMessage.space_id == space.id)).all():
+        session.delete(msg)
+    
+    # Delete all documents from SQL
+    for doc in session.exec(select(Document).where(Document.space_id == space.id)).all():
+        session.delete(doc)
+    
+    # Delete the space
+    session.delete(space)
+    session.commit()
+    
+    return {"message": f"Deleted space {space.name}"}
+
 # --- Documents Endpoints ---
 
 @app.get("/spaces/{space_id}/documents", response_model=List[Document])
@@ -187,6 +230,24 @@ async def get_messages(space_id: str, session: Session = Depends(get_session)):
         .order_by(ChatMessage.timestamp)
     ).all()
     return messages
+
+@app.delete("/spaces/{space_id}/messages")
+async def clear_messages(space_id: str, session: Session = Depends(get_session)):
+    """Clear chat history for a space."""
+    # Verify space exists
+    space = session.get(Space, uuid.UUID(space_id))
+    if not space:
+        raise HTTPException(status_code=404, detail="Space not found")
+    
+    # Delete all messages for this space
+    messages = session.exec(
+        select(ChatMessage).where(ChatMessage.space_id == space.id)
+    ).all()
+    for msg in messages:
+        session.delete(msg)
+    session.commit()
+    
+    return {"message": f"Cleared {len(messages)} messages"}
 
 # --- Chat ---
 
