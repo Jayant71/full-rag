@@ -43,11 +43,14 @@ def get_qdrant_client(api_keys: UserAPIKeys) -> QdrantClient:
 
 
 def get_index(api_keys: UserAPIKeys) -> VectorStoreIndex:
-    """Get the vector store index using user's Qdrant URL."""
+    """Get the vector store index using user's Qdrant URL and embed model."""
     vector_store = get_vector_store(api_keys)
+    embed_model = create_embed_model(api_keys)
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     return VectorStoreIndex.from_vector_store(
-        vector_store, storage_context=storage_context
+        vector_store, 
+        storage_context=storage_context,
+        embed_model=embed_model,
     )
 
 
