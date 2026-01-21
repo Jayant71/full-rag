@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: Optional[str] = None
     OPENAI_MODEL_NAME: str = "gpt-4"
     OPENAI_BASE_URL: Optional[str] = None
+    GOOGLE_API_KEY: Optional[str] = None
     LLAMA_CLOUD_API_KEY: Optional[str] = None
     COHERE_API_KEY: Optional[str] = None
     QDRANT_URL: Optional[str] = None
