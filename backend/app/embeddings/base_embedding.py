@@ -9,3 +9,7 @@ class EmbeddingGenerator(ABC):
     @abstractmethod
     def get_embedding_dimension(self) -> int:
         pass
+
+    @abstractmethod
+    def get_embeddings_model(self):
+        pass

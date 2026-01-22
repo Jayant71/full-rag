@@ -2,9 +2,10 @@ from pyexpat import model
 from langchain_openai import ChatOpenAI
 from app.core.config import settings
 from pydantic import SecretStr
+from app.utils.logger import llm_logger
 
 
-def get_chat_model(temperature: float = 0.7) -> ChatOpenAI:
+def get_openai_chat_model(temperature: float = 0.7) -> ChatOpenAI:
     model_name = settings.OPENAI_MODEL_NAME
     URL = settings.OPENAI_BASE_URL
     if URL:
@@ -24,5 +25,6 @@ def get_chat_model(temperature: float = 0.7) -> ChatOpenAI:
 
 
 if __name__ == "__main__":
-    model = get_chat_model()
-    print(model)
+    model = get_openai_chat_model()
+    llm_logger.info(f"Initialized LLM model: {model}")
+    llm_logger.info(model.invoke("What are you?"))

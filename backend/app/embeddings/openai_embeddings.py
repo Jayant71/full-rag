@@ -1,4 +1,4 @@
-from app.utils.embeddings.base_embedding import EmbeddingGenerator
+from app.embeddings.base_embedding import EmbeddingGenerator
 from app.utils.logger import documents_logger as DL
 from app.utils.cosine_similarity import cosine_similarity
 from langchain_openai.embeddings import OpenAIEmbeddings
@@ -18,6 +18,9 @@ class OpenAIEmbedding(EmbeddingGenerator):
 
     def get_embedding_dimension(self) -> int:
         return self.model.embed_documents(["test"])[0].__len__()
+
+    def get_embeddings_model(self):
+        return self.model
 
 
 if __name__ == "__main__":

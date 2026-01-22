@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=[".env", "../.env"], env_file_encoding="utf-8", extra="ignore")
+        env_file=[".env"], env_file_encoding="utf-8", extra="ignore")
     ENV: Literal["dev", "prod"] = "dev"
     JWT_SECRET_KEY: str = "your-secret-key"
     OPENAI_API_KEY: Optional[str] = None

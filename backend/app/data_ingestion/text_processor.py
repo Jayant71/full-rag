@@ -1,10 +1,11 @@
-from app.utils.data_ingestion.base_processor import Processor
+from langchain_community.document_loaders import TextLoader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import Docx2txtLoader
+from app.utils.logger import documents_logger as DL
+from app.data_ingestion.base_processor import Processor
 
 
-class DocProcessor(Processor):
+class TextProcessor(Processor):
 
     def __init__(self, chunk_size: int = 1000, chunk_overlap: int = 100):
         self.chunk_size = chunk_size
@@ -16,17 +17,15 @@ class DocProcessor(Processor):
         )
 
     def process(self, file_path: str):
-        loader = Docx2txtLoader(file_path)
-        try:
-            documents = loader.load()
-        except Exception as e:
-            raise RuntimeError(f"Failed to load .docx file: {e}")
+        loader = TextLoader(file_path)
+        documents = loader.load()
 
         all_chunks = self.text_splitter.split_documents(documents)
 
         for i, chunk in enumerate(all_chunks):
             chunk.metadata = {
                 **chunk.metadata,
+
                 "chunk_index": i + 1,
                 "total_chunks": len(all_chunks)
             }
@@ -35,11 +34,11 @@ class DocProcessor(Processor):
 
 
 if __name__ == "__main__":
-    doc_processor = DocProcessor(chunk_size=500, chunk_overlap=50)
+    text_processor = TextProcessor(chunk_size=500, chunk_overlap=50)
 
-    chunks = doc_processor.process(r"E:\College\Mydocs\Results\sample.docx")
+    chunks = text_processor.process(r"E:\College\Mydocs\Results\sem8.txt")
 
     for chunk in chunks:
-        print("--------------------------------------")
-        print(f"Chunk content: {chunk.metadata}")
-        print("--------------------------------------")
+        DL.debug("--------------------------------------")
+        DL.debug(f"Chunk content: {chunk.metadata}")
+        DL.debug("--------------------------------------")
